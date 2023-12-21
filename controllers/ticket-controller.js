@@ -6,7 +6,7 @@ const viewTicket = (req, res)=>{
 
 }
 
-const filterickets = (req, res)=>{
+const filterTickets = (req, res)=>{
 
 }
 
@@ -17,6 +17,6 @@ const resolveTicket = (req, res)=>{
 module.exports = {
     viewTickets,
     viewTicket,
-    filterickets,
+    filterTickets,
     resolveTicket
 }
