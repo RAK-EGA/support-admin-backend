@@ -1,27 +1,32 @@
-const express = require("express");
+const env = require('dotenv').config();
+// const dynamoose = require('dynamoose');
+const express = require('express');
+const router = require('./routes/ticket-router');
+
+
+// mongoose.connect('mongodb+srv://node-practice:L0o9czZTnjcEgYGQ@node-practice.4qdkfrr.mongodb.net/'
+// ).then(()=>app.listen(process.env.port)
+// ).then(()=>console.log(`server running on port ${process.env.port}`)
+// ).catch((err) => console.log(err));
 
 const app = express();
 
-app.get("/hello", (req,res) => {
-        res.send("getHello");
-
-});
-
-
-app.get("/", (req,res) => {
-    res.send("sbaho");
-
-});
+app.use(router);
+app.use(express.static('public'));
 
 
 
+// app.use('/', require('./server/routes/main'));
 
-app.post("/hello", (req,res) => {
-    res.send("Hello");
 
-});
-app.listen(30001,() => {
-    console.log("iam in port 30001");
+// const dorenv = require('dotenv').config();
+// const express = require("express");
+
+// const app = express();
+
+
+app.listen(process.env.port,() => {
+    console.log(`server running on port: ${process.env.port}`);
 });
 
 
