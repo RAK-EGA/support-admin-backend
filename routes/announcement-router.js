@@ -7,5 +7,6 @@ router.put('/updateAnnouncement/:announcementId', announcementController.updateA
 router.delete('/deleteAnnouncement/:announcementId', announcementController.deleteAnnouncement);
 router.get('/viewAnnouncements', announcementController.viewAnnouncements);
 router.get('/viewAnnouncement/:announcementId', announcementController.viewAnnouncement);
+router.get('/searchAnnouncement', announcementController.searchAnnouncement);
 
 module.exports = router;

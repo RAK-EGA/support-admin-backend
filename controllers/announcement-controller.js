@@ -1,20 +1,101 @@
-const postAnnouncement = (req, res) =>{
-    
+const Announcement = require("../models/Announcement");
+
+const postAnnouncement = async(req, res) =>{
+    const {title, body} = req.body;
+    try {
+                const newAnnouncement = new Announcement({
+                   title,
+                   body
+                 })
+
+                try {
+                    await newAnnouncement.save();
+                    res.status(201).json({newAnnouncement});
+                } catch (error) {
+                    console.log(error);
+                } 
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 }
 
-const updateAnnouncement = (req, res) =>{
-    
+const updateAnnouncement = async(req, res) =>{
+    const announcementId = req.params.announcementId;
+    const { title,body } = req.body;
+    try {
+        const updatedAnnouncement = await Announcement.findByIdAndUpdate(
+            announcementId,
+            { title: title },
+            {body: body},
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedAnnouncement) {
+            return res.status(404).json({ message: "Announcement not found" });
+        }
+
+        res.status(201).json({ message: "announcement updated successfully", announcement: updatedAnnouncement });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 }
 
-const deleteAnnouncement = (req, res) =>{
-    
+const deleteAnnouncement = async(req, res) =>{
+    const announcementId = req.params.announcementId; 
+    try {
+        const announcement = await Announcement.findById(announcementId);
+        if (!announcement) {
+            return res.status(404).json({ msg: "Announcement not found" });
+        }
+        await Announcement.deleteOne(announcement);
+        res.status(201).json({ msg: "successfully deleted" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
 }
 
-const viewAnnouncements = (req, res) =>{
-    
+const viewAnnouncements = async(req, res) =>{
+    let announcements;
+    try {
+        announcements = await Announcement.find();
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+    if(!announcements){
+        res.status(404).json({message:"No announcements Found"});
+    }
+    return res.status(200).json({announcements});
 }
-const viewAnnouncement = (req, res) =>{
-    
+const viewAnnouncement = async(req, res) =>{
+    const announcementId = req.params.announcementId; 
+    try {
+        const announcement = await Announcement.findById(announcementId);
+        if (!announcement) {
+            return res.status(404).json({ msg: "announcement not found" });
+        }
+        res.status(200).json({ msg: "announcement details", announcement });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+}
+
+const searchAnnouncement = async(req, res) => {
+    const {title} = req.body;
+    let announcements;
+    try {
+        announcements = await Announcement.find({
+            title: { $regex: new RegExp(title, 'i') }
+        })
+        res.status(200).json({ msg: "announcements details", announcements });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
 }
 
 module.exports = {
@@ -22,5 +103,6 @@ module.exports = {
     updateAnnouncement,
     deleteAnnouncement,
     viewAnnouncement,
-    viewAnnouncements
+    viewAnnouncements,
+    searchAnnouncement
 }
