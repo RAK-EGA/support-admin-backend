@@ -1,9 +1,13 @@
 const Staff = require("../models/StaffMember");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const signin = async(req, res)=>{
     const { email, password } = req.body;
-  
+    if(!email || !password){
+        res.status(400).json({mesasge:"all fields are mandatory"});
+        // throw new Error("all fields are mandatory");
+    }
     try {
       const user = await Staff.findOne({ email });
   
@@ -15,7 +19,18 @@ const signin = async(req, res)=>{
       const isMatch = await bcrypt.compare(password, user.password); 
   
       if (isMatch) {
-        res.status(200).json({ user });
+        const accessToken = jwt.sign({
+            user:{
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                department: user.department
+            }
+        }, 
+        process.env.ACCESS_TOKEN_SECRET,
+        {expiresIn: "30m"}
+        );
+        res.status(200).json({ user, accessToken });
       } else {
         res.json({ message: "Incorrect password!!" });
       }
@@ -24,6 +39,7 @@ const signin = async(req, res)=>{
       res.status(500).json({ message: "Internal server error" });
     }
 }
+
 const viewstaffs = async(req, res)=>{
     let users;
     try {
@@ -100,7 +116,7 @@ const deletestaff = async(req, res)=>{
     }
 }
 const changePassword = async(req, res)=>{
-    const staffID = req.params.staffID;
+    const staffID = req.user.id;
     const { password, confirmPassword } = req.body;
 
     if (password === confirmPassword) {
@@ -151,6 +167,41 @@ const updateDepartment = async(req, res)=>{
     }
 }
 
+const viewprofile = async(req, res)=>{
+    const userID = req.user.id;
+    try {
+        const staff = await Staff.findById(userID);
+        res.status(200).json(staff);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const deleteMultiStaff = async (req, res) => {
+    const {staffIDs} = req.body;
+
+    try {
+        for (const staffID of staffIDs) {
+            try {
+                const staff = await Staff.findById(staffID);
+                if (!staff) {
+                    return res.status(404).json({ msg: "Staff not found" });
+                }
+                await Staff.deleteOne({ _id: staffID });
+            } catch (error) {
+                console.error(error);
+                return res.status(500).json({ error: "Internal Server Error" });
+            }
+        }
+
+        res.status(200).json({ msg: "Successfully deleted" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
 module.exports = {
     signin,
     viewstaff,
@@ -159,4 +210,6 @@ module.exports = {
     viewstaffs,
     changePassword,
     updateDepartment,
+    viewprofile,
+    deleteMultiStaff
 }

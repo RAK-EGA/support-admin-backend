@@ -35,7 +35,9 @@ const updateAnnouncement = async(req, res) =>{
             return res.status(404).json({ message: "Announcement not found" });
         }
 
-        res.status(201).json({ message: "announcement updated successfully", announcement: updatedAnnouncement });
+        const resultAnnouncement = await Announcement.findById(announcementId);
+
+        res.status(201).json({ message: "announcement updated successfully", announcement: resultAnnouncement });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -68,6 +70,7 @@ const viewAnnouncements = async(req, res) =>{
     if(!announcements){
         res.status(404).json({message:"No announcements Found"});
     }
+    
     return res.status(200).json({announcements});
 }
 const viewAnnouncement = async(req, res) =>{
@@ -98,11 +101,36 @@ const searchAnnouncement = async(req, res) => {
     }
 }
 
+const deleteMultiAnnouncements = async (req, res) => {
+    const {announcementIDs} = req.body;
+
+    try {
+        for (const announcementID of announcementIDs) {
+            try {
+                const announcement = await Announcement.findById(announcementID);
+                if (!announcement) {
+                    return res.status(404).json({ msg: "Announcement not found" });
+                }
+                await Announcement.deleteOne({ _id: announcementID });
+            } catch (error) {
+                console.error(error);
+                return res.status(500).json({ error: "Internal Server Error" });
+            }
+        }
+
+        res.status(200).json({ msg: "Successfully deleted" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
 module.exports = {
     postAnnouncement,
     updateAnnouncement,
     deleteAnnouncement,
     viewAnnouncement,
     viewAnnouncements,
-    searchAnnouncement
+    searchAnnouncement,
+    deleteMultiAnnouncements
 }
