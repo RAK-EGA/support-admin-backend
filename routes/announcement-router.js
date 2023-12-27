@@ -25,10 +25,10 @@
 * tags:
 *   name: Announcement
 *   description: The announcements managing API
-* /:
+* /viewAnnouncements:
 *   get:
 *     summary: Lists all the announcements
-*     tags: [Announcements]
+*     tags: [Announcement]
 *     responses:
 *       200:
 *         description: The list of the announcements
@@ -37,88 +37,125 @@
 *             schema:
 *               type: array
 *               items:
-*                 $ref: '#/components/schemas/Books'
+*                 $ref: '#/components/schemas/Announcement'
+* /postAnnouncement:
 *   post:
 *     summary: Create a new announcement
-*     tags: [Books]
+*     tags: [Announcement]
 *     requestBody:
 *       required: true
 *       content:
 *         application/json:
 *           schema:
-*             $ref: '#/components/schemas/Books'
+*             $ref: '#/components/schemas/Announcement'
 *     responses:
-*       200:
-*         description: The created book.
+*       201:
+*         description: The created announcement.
 *         content:
 *           application/json:
 *             schema:
-*               $ref: '#/components/schemas/Books'
+*               $ref: '#/components/schemas/Announcement'
 *       500:
 *         description: Some server error
-* /book/{id}:
+* /viewAnnouncement/:announcementId:
 *   get:
-*     summary: Get the book by id
-*     tags: [Books]
+*     summary: Get the announcement by id
+*     tags: [Announcement]
 *     parameters:
 *       - in: path
-*         name: id
+*         name: _id
 *         schema:
 *           type: string
 *         required: true
-*         description: The book id
+*         description: The announcement id
 *     responses:
 *       200:
-*         description: The book response by id
+*         description: The announcement response by id
 *         contens:
 *           application/json:
 *             schema:
-*               $ref: '#/components/schemas/Books'
+*               $ref: '#/components/schemas/Announcement'
 *       404:
-*         description: The book was not found
+*         description: The announcement was not found
+*       500:
+*         description: Some server error
+* /updateAnnouncement/:announcementId:
 *   put:
-*    summary: Update the book by the id
-*    tags: [Books]
+*    summary: Update the announcement by the id
+*    tags: [Announcement]
 *    parameters:
 *      - in: path
-*        name: id
+*        name: _id
 *        schema:
 *          type: string
 *        required: true
-*        description: The book id
+*        description: The announcement id
 *    requestBody:
 *      required: true
 *      content:
 *        application/json:
 *          schema:
-*            $ref: '#/components/schemas/Books'
+*            $ref: '#/components/schemas/Announcement'
 *    responses:
-*      200:
-*        description: The book was updated
+*      201:
+*        description: The announcement was updated
 *        content:
 *          application/json:
 *            schema:
-*              $ref: '#/components/schemas/Books'
+*              $ref: '#/components/schemas/Announcement'
 *      404:
-*        description: The book was not found
+*        description: The announcement was not found
 *      500:
 *        description: Some error happened
+* /deleteAnnouncement/:announcementId:
 *   delete:
-*     summary: Remove the book by id
-*     tags: [Books]
+*     summary: Remove the announcement by id
+*     tags: [Announcement]
 *     parameters:
 *       - in: path
 *         name: id
 *         schema:
 *           type: string
 *         required: true
-*         description: The book id
+*         description: The announcement id
 *
 *     responses:
 *       200:
-*         description: The book was deleted
+*         description: The announcement was deleted
 *       404:
-*         description: The book was not found
+*         description: The announcement was not found
+*       500:
+*        description: Some error happened
+* /deleteAnnouncements:
+*   delete:
+*     summary: Remove multiple announcements by id
+*     tags: [Announcement]
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             $ref: '#/components/schemas/Announcement'
+*     responses:
+*       200:
+*         description: The announcements were deleted
+*       404:
+*         description: The announcements were not found
+*       500:
+*        description: Some error happened
+* /searchAnnouncement:
+*   get:
+*     summary: Search for announcements
+*     tags: [Announcement]
+*     responses:
+*       200:
+*         description: Search for one or more announcement
+*         content:
+*           application/json:
+*             schema:
+*               type: array
+*               items:
+*                 $ref: '#/components/schemas/Announcement'
 */
 
 const express = require('express');

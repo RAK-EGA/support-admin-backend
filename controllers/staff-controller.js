@@ -157,7 +157,7 @@ const updateDepartment = async(req, res)=>{
         );
 
         if (!updatedStaff) {
-            return res.status(404).json({ message: "department not found" });
+            return res.status(404).json({ message: "user not found" });
         }
 
         res.status(200).json({ message: "department updated successfully", staff: updatedStaff });
