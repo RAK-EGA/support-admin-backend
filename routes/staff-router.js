@@ -229,14 +229,14 @@ const staffController = require('../controllers/staff-controller');
 const validateToken = require('../middleware/validateTokenHandler');
 
 router.post('/support/signin', staffController.signin);
-router.post('/support/addstaff', validateToken, staffController.addstaff);
-router.get('/support/viewstaffs', validateToken, staffController.viewstaffs);
-router.get('/support/viewstaff/:staffID', validateToken, staffController.viewstaff);
-router.get('/support/viewprofile', validateToken, staffController.viewprofile);
-router.delete('/support/deletestaff/:staffID', validateToken, staffController.deletestaff);
-router.delete('/support/deletestaffs', validateToken, staffController.deleteMultiStaff);
-router.patch('/support/updatedepartment/:staffID', validateToken, staffController.updateDepartment);
-router.patch('/support/changepassword', validateToken, staffController.changePassword);
+router.post('/support/addstaff',  staffController.addstaff);
+router.get('/support/viewstaffs',  staffController.viewstaffs);
+router.get('/support/viewstaff/:staffID',  staffController.viewstaff);
+router.get('/support/viewprofile',  staffController.viewprofile);
+router.delete('/support/deletestaff/:staffID',  staffController.deletestaff);
+router.delete('/support/deletestaffs',  staffController.deleteMultiStaff);
+router.patch('/support/updatedepartment/:staffID',  staffController.updateDepartment);
+router.patch('/support/changepassword',  staffController.changePassword);
 router.get('/support/hi', staffController.hi);
 
 
