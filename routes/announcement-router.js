@@ -163,12 +163,12 @@ const router = express.Router();
 const announcementController = require('../controllers/announcement-controller');
 const validateToken = require('../middleware/validateTokenHandler');
 
-router.post('/postAnnouncement', validateToken, announcementController.postAnnouncement);
-router.put('/updateAnnouncement/:announcementId', validateToken, announcementController.updateAnnouncement);
-router.delete('/deleteAnnouncement/:announcementId', validateToken, announcementController.deleteAnnouncement);
-router.delete('/deleteAnnouncements', validateToken, announcementController.deleteMultiAnnouncements);
-router.get('/viewAnnouncements', validateToken, announcementController.viewAnnouncements);
-router.get('/viewAnnouncement/:announcementId', validateToken, announcementController.viewAnnouncement);
-router.get('/searchAnnouncement', validateToken, announcementController.searchAnnouncement);
+router.post('/support/postAnnouncement', validateToken, announcementController.postAnnouncement);
+router.put('/support/updateAnnouncement/:announcementId', validateToken, announcementController.updateAnnouncement);
+router.delete('/support/deleteAnnouncement/:announcementId', validateToken, announcementController.deleteAnnouncement);
+router.delete('/support/deleteAnnouncements', validateToken, announcementController.deleteMultiAnnouncements);
+router.get('/support/viewAnnouncements', validateToken, announcementController.viewAnnouncements);
+router.get('/support/viewAnnouncement/:announcementId', validateToken, announcementController.viewAnnouncement);
+router.get('/support/searchAnnouncement', validateToken, announcementController.searchAnnouncement);
 
 module.exports = router;

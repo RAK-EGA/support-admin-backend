@@ -228,16 +228,16 @@ const router = express.Router();
 const staffController = require('../controllers/staff-controller');
 const validateToken = require('../middleware/validateTokenHandler');
 
-router.post('/signin', staffController.signin);
-router.post('/addstaff', validateToken, staffController.addstaff);
-router.get('/viewstaffs', validateToken, staffController.viewstaffs);
-router.get('/viewstaff/:staffID', validateToken, staffController.viewstaff);
-router.get('/viewprofile', validateToken, staffController.viewprofile);
-router.delete('/deletestaff/:staffID', validateToken, staffController.deletestaff);
-router.delete('/deletestaffs', validateToken, staffController.deleteMultiStaff);
-router.patch('/updatedepartment/:staffID', validateToken, staffController.updateDepartment);
-router.patch('/changepassword', validateToken, staffController.changePassword);
-router.get('/hi', validateToken, staffController.hi);
+router.post('/support/signin', staffController.signin);
+router.post('/support/addstaff', validateToken, staffController.addstaff);
+router.get('/support/viewstaffs', validateToken, staffController.viewstaffs);
+router.get('/support/viewstaff/:staffID', validateToken, staffController.viewstaff);
+router.get('/support/viewprofile', validateToken, staffController.viewprofile);
+router.delete('/support/deletestaff/:staffID', validateToken, staffController.deletestaff);
+router.delete('/support/deletestaffs', validateToken, staffController.deleteMultiStaff);
+router.patch('/support/updatedepartment/:staffID', validateToken, staffController.updateDepartment);
+router.patch('/support/changepassword', validateToken, staffController.changePassword);
+router.get('/support/hi', validateToken, staffController.hi);
 
 
 module.exports = router;
