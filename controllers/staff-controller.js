@@ -92,7 +92,7 @@ const addstaff = async(req, res)=>{
                     console.log(error);
                 } 
             }else{
-                res.json({message:"the confirm password does not match the password!"})
+                res.status(400).json({message:"the confirm password does not match the password!"})
             }
             
         }
@@ -186,7 +186,7 @@ const deleteMultiStaff = async (req, res) => {
             try {
                 const staff = await Staff.findById(staffID);
                 if (!staff) {
-                    return res.status(404).json({ msg: "Staff not found" });
+                    return res.status(404).json({ msg: `Staff with the id: ${staffID} was not found` });
                 }
                 await Staff.deleteOne({ _id: staffID });
             } catch (error) {

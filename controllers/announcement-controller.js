@@ -73,6 +73,7 @@ const viewAnnouncements = async(req, res) =>{
     
     return res.status(200).json({announcements});
 }
+
 const viewAnnouncement = async(req, res) =>{
     const announcementId = req.params.announcementId; 
     try {
@@ -87,19 +88,24 @@ const viewAnnouncement = async(req, res) =>{
     }
 }
 
-const searchAnnouncement = async(req, res) => {
-    const {title} = req.body;
-    let announcements;
+const searchAnnouncement = async (req, res) => {
+    const { title } = req.body;
     try {
-        announcements = await Announcement.find({
+        const announcements = await Announcement.find({
             title: { $regex: new RegExp(title, 'i') }
-        })
-        res.status(200).json({ msg: "announcements details", announcements });
+        });
+
+        if (announcements.length === 0) {
+            return res.status(404).json({ msg: "No announcements found" });
+        } else {
+            res.status(200).json({ msg: "Announcements details", announcements });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Internal Server Error" });
     }
-}
+};
+
 
 const deleteMultiAnnouncements = async (req, res) => {
     const {announcementIDs} = req.body;
@@ -109,7 +115,7 @@ const deleteMultiAnnouncements = async (req, res) => {
             try {
                 const announcement = await Announcement.findById(announcementID);
                 if (!announcement) {
-                    return res.status(404).json({ msg: "Announcement not found" });
+                    return res.status(404).json({ msg: `Announcement with the id: ${announcementID} was not found` });
                 }
                 await Announcement.deleteOne({ _id: announcementID });
             } catch (error) {
