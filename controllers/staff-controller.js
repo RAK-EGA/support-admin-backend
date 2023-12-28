@@ -32,7 +32,7 @@ const signin = async(req, res)=>{
         );
         res.status(200).json({ user, accessToken });
       } else {
-        res.json({ message: "Incorrect password!!" });
+        res.status(400).json({ message: "Incorrect password!!" });
       }
     } catch (error) {
       console.error(error);
