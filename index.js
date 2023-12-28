@@ -56,9 +56,11 @@ app.use(
     swaggerui.setup(spacs)
 );
 
+const port = process.env.PORT || 3000;
+
 mongoose.connect('mongodb+srv://node-practice:L0o9czZTnjcEgYGQ@node-practice.4qdkfrr.mongodb.net/'
-).then(()=>app.listen(process.env.port)
-).then(()=>console.log(`server running on port ${process.env.port}`)
+).then(()=>app.listen({port: port, host: "0.0.0.0"})
+).then(()=>console.log(`server running on port ${port}`)
 ).catch((err) => console.log(err));
 
 
