@@ -237,6 +237,7 @@ router.delete('/deletestaff/:staffID', validateToken, staffController.deletestaf
 router.delete('/deletestaffs', validateToken, staffController.deleteMultiStaff);
 router.patch('/updatedepartment/:staffID', validateToken, staffController.updateDepartment);
 router.patch('/changepassword', validateToken, staffController.changePassword);
+router.get('/hi', validateToken, staffController.hi);
 
 
 module.exports = router;

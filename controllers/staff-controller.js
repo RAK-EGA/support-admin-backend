@@ -202,6 +202,10 @@ const deleteMultiStaff = async (req, res) => {
     }
 };
 
+const hi = (req, res) => {
+    res.status(200).json({message:"hi suhail"});
+};
+
 module.exports = {
     signin,
     viewstaff,
@@ -211,5 +215,6 @@ module.exports = {
     changePassword,
     updateDepartment,
     viewprofile,
-    deleteMultiStaff
+    deleteMultiStaff,
+    hi
 }
