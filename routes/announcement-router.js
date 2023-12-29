@@ -164,11 +164,11 @@ const announcementController = require('../controllers/announcement-controller')
 const validateToken = require('../middleware/validateTokenHandler');
 
 router.post('/support/postAnnouncement',  announcementController.postAnnouncement);
-router.put('/support/updateAnnouncement/:announcementId',  announcementController.updateAnnouncement);
+router.put('/support/updateAnnouncement/:announcementId', announcementController.updateAnnouncement);
 router.delete('/support/deleteAnnouncement/:announcementId',  announcementController.deleteAnnouncement);
 router.delete('/support/deleteAnnouncements',  announcementController.deleteMultiAnnouncements);
 router.get('/support/viewAnnouncements',  announcementController.viewAnnouncements);
-router.get('/support/viewAnnouncement/:announcementId',  announcementController.viewAnnouncement);
-router.get('/support/searchAnnouncement',  announcementController.searchAnnouncement);
+router.get('/support/viewAnnouncement/:announcementId', announcementController.viewAnnouncement);
+router.post('/support/searchAnnouncement',  announcementController.searchAnnouncement);
 
 module.exports = router;

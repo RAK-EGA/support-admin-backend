@@ -5,5 +5,6 @@ const permitController = require('../controllers/permits-controller');
 router.get('/support/viewPermits', permitController.viewPermits);
 router.get('/support/viewPermit/:permitId', permitController.viewPermit);
 router.get('/support/filterPermits', permitController.filterPermits);
+router.get('/support/updatestatuspermit', permitController.updateStatusPermit);
 
 module.exports = router;

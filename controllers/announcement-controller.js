@@ -90,20 +90,31 @@ const viewAnnouncement = async(req, res) =>{
 
 const searchAnnouncement = async (req, res) => {
     const { title } = req.body;
-    try {
-        const announcements = await Announcement.find({
-            title: { $regex: new RegExp(title, 'i') }
-        });
-
-        if (announcements.length === 0) {
-            return res.status(404).json({ msg: "No announcements found" });
-        } else {
-            res.status(200).json({ msg: "Announcements details", announcements });
+    
+    if(title == null || title == ""){
+        try {
+            const announcements = await Announcement.find();    
+            res.status(200).json({announcements})
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ msg: "Internal Server Error" });
         }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: "Internal Server Error" });
-    }
+    }else{
+        try {
+            const announcements = await Announcement.find({
+                title: { $regex: new RegExp(title, 'i') }
+            });
+    
+            if (announcements.length === 0) {
+                return res.status(404).json({ msg: "No announcements found" });
+            } else {
+                res.status(200).json({ msg: "Announcements details", announcements });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ msg: "Internal Server Error" });
+        }
+    } 
 };
 
 
