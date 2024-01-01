@@ -36,7 +36,7 @@ const updateAnnouncement = async(req, res) =>{
             { new: true } 
         );
         res.status(201).json({ message: "announcement updated successfully", announcement: updatedAnnouncement });
-        
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -92,7 +92,7 @@ const searchAnnouncement = async (req, res) => {
     
     if(title == null || title == ""){
         try {
-            const announcements = await Announcement.find();    
+            const announcements = await Announcement.find().sort({ createdAt: -1 });    
             res.status(200).json({announcements})
         } catch (error) {
             console.error(error);
@@ -102,7 +102,7 @@ const searchAnnouncement = async (req, res) => {
         try {
             const announcements = await Announcement.find({
                 title: { $regex: new RegExp(title, 'i') }
-            }).sort({ createdAt: -1 });;
+            }).sort({ createdAt: -1 });
     
             if (announcements.length === 0) {
                 return res.status(404).json({ msg: "No announcements found" });
