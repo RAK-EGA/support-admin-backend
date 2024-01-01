@@ -1,4 +1,5 @@
 const {postAnnouncement} = require('../../controllers/announcement-controller');
+const {updateAnnouncement} = require('../../controllers/announcement-controller');
 const Announcement = require('../../models/Announcement');
 
 jest.mock('../../models/Announcement');
@@ -32,3 +33,4 @@ it('should send a status code of 201 when an announcement is posted', async () =
   expect(mockInstance.save).toHaveBeenCalledTimes(1);
   expect(res.status).toHaveBeenCalledWith(201);
 });
+
