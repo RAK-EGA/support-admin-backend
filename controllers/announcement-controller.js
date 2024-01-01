@@ -23,21 +23,20 @@ const postAnnouncement = async(req, res) =>{
 const updateAnnouncement = async(req, res) =>{
     const announcementId = req.params.announcementId;
     const { title,body } = req.body;
-    try {
-        const updatedAnnouncement = await Announcement.findByIdAndUpdate(
-            announcementId,
-            { title: title },
-            {body: body},
-            { new: true } // Return the updated document
-        );
 
-        if (!updatedAnnouncement) {
+    try {
+        const announcementNotExist = await Announcement.findById(announcementId);
+        if (!announcementNotExist) {
             return res.status(404).json({ message: "Announcement not found" });
         }
 
-        const resultAnnouncement = await Announcement.findById(announcementId);
-
-        res.status(201).json({ message: "announcement updated successfully", announcement: resultAnnouncement });
+        const updatedAnnouncement = await Announcement.findByIdAndUpdate(
+            announcementId,
+            { title: title , body: body},
+            { new: true } 
+        );
+        res.status(201).json({ message: "announcement updated successfully", announcement: updatedAnnouncement });
+        
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
