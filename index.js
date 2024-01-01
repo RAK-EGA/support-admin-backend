@@ -53,7 +53,7 @@ const options = {
 
 const spacs = swaggerjsdoc(options);
 app.use(
-    "/api-docs",
+    "/support/api-docs",
     swaggerui.serve,
     swaggerui.setup(spacs)
 );
