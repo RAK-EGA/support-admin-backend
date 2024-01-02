@@ -2,43 +2,46 @@ const Staff = require("../models/StaffMember");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const signin = async(req, res)=>{
-    const { email, password } = req.body;
-    if(!email || !password){
-        res.status(400).json({mesasge:"all fields are mandatory"});
-        // throw new Error("all fields are mandatory");
+const signin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    if (!email || !password) {
+      res.status(400).json({ message: "All fields are mandatory" });
+      return;
     }
-    try {
-      const user = await Staff.findOne({ email });
-  
-      if (!user) {
-        res.status(404).json({ message: "This email is not registered!" });
-        return;
-      }
-  
-      const isMatch = await bcrypt.compare(password, user.password); 
-  
-      if (isMatch) {
-        const accessToken = jwt.sign({
-            user:{
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                department: user.department
-            }
-        }, 
+
+    const user = await Staff.findOne({ email });
+
+    if (!user) {
+      res.status(404).json({ message: "This email is not registered!" });
+      return;
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (isMatch) {
+      const accessToken = jwt.sign(
+        {
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            department: user.department,
+          },
+        },
         process.env.ACCESS_TOKEN_SECRET,
-        {expiresIn: "30m"}
-        );
-        res.status(200).json({ user, accessToken });
-      } else {
-        res.status(400).json({ message: "Incorrect password!!" });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+        { expiresIn: "30m" }
+      );
+      res.status(200).json({ user, accessToken });
+    } else {
+      res.status(400).json({ message: "Incorrect password!!" });
     }
-}
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const viewstaffs = async(req, res)=>{
     let users;
