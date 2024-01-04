@@ -102,7 +102,7 @@ const searchAnnouncement = async (req, res) => {
         try {
             const announcements = await Announcement.find({
                 title: { $regex: new RegExp(title, 'i') }
-            }).sort({ createdAt: -1 });
+            }).sort({ updatedAt: -1 });
     
             if (announcements.length === 0) {
                 return res.status(404).json({ msg: "No announcements found" });
