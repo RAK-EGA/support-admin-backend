@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const viewTickets = (req, res) => {
-    axios.get('http://172.27.134.108:3000/service/complaint/view')
+    axios.get('https://rakmun-api.rakega.online/service/complaint/view')
         .then(response => {
             res.status(response.status).json(response.data);
         })
@@ -18,7 +18,7 @@ const viewTicket = (req, res) => {
         return res.status(400).json({ error: 'Missing or invalid id parameter' });
     }
 
-    const apiUrl = `http://172.27.134.108:3000/service/complaint/view/${id}`;
+    const apiUrl = `https://rakmun-api.rakega.online/service/complaint/view/${id}`;
 
     axios.get(apiUrl)
         .then(response => {
@@ -38,7 +38,7 @@ const filterTickets = (req, res)=>{
         return res.status(400).json({ error: 'Missing or invalid id parameter' });
     }
 
-    const apiUrl = `http://172.27.134.108:3000/service/complaint/filter/${searchfactor}`;
+    const apiUrl = `https://rakmun-api.rakega.online/service/complaint/filter/${searchfactor}`;
 
     axios.get(apiUrl)
         .then(response => {
@@ -62,7 +62,7 @@ const updateStatusTicket = (req, res) => {
         return res.status(400).json({ error: 'Missing status parameter in the request body' });
     }
 
-    const apiUrl = `http://172.27.134.108:3000/service/complaint/update/${id}`;
+    const apiUrl = `https://rakmun-api.rakega.online/service/complaint/update/${id}`;
 
     axios.put(apiUrl, { status })
         .then(response => {
