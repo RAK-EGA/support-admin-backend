@@ -4,10 +4,14 @@ const mongoose = require('mongoose');
 const express = require('express');
 const staffRouter = require('./routes/staff-router');
 const announcementRouter = require('./routes/announcement-router');
+const newsRouter = require('./routes/news-router');
 const swaggerjsdoc = require("swagger-jsdoc");
 const swaggerui = require("swagger-ui-express");
 const cors = require('cors');
 const ticketsRouter = require('./routes/ticket-router');
+const { startSQSListener } = require('./services/sqsService');
+const { handleSLAChecker } = require('./helpers/sqsMsgHandler');
+startSQSListener(process.env.CHECLSLA_URL, handleSLAChecker);
 
 
 // mongoose.connect('mongodb+srv://node-practice:L0o9czZTnjcEgYGQ@node-practice.4qdkfrr.mongodb.net/'
@@ -22,6 +26,7 @@ app.options('*', cors());
 app.use(staffRouter);
 app.use(announcementRouter);
 app.use(ticketsRouter);
+app.use(newsRouter);
 app.use(express.static('public'));
 
 
