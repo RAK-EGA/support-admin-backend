@@ -74,6 +74,25 @@ const updateStatusTicket = (req, res) => {
         });
 };
 
+
+const routetothirdparty = (req, res) =>{
+    const id = req.params.id;
+    const { status } = req.body;
+
+    const apiUrl = `https://rakmun-api.rakega.online/suppport/resolveTicket/${id}`;
+
+    axios.put(apiUrl, { status })
+        .then(response => {
+            res.status(response.status).json(response.data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
+        });
+
+
+
+}
 module.exports = {
     viewTickets,
     viewTicket,

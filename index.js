@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const staffRouter = require('./routes/staff-router');
 const announcementRouter = require('./routes/announcement-router');
+const thirdPartyRouter = require('./routes/thirdParty-router');
 const newsRouter = require('./routes/news-router');
 const swaggerjsdoc = require("swagger-jsdoc");
 const swaggerui = require("swagger-ui-express");
@@ -27,6 +28,7 @@ app.use(staffRouter);
 app.use(announcementRouter);
 app.use(ticketsRouter);
 app.use(newsRouter);
+app.use(thirdPartyRouter);
 app.use(express.static('public'));
 
 
