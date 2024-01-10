@@ -20,6 +20,17 @@ const supportStaffSchema = new Schema({
         type: String,
         required: true,
         minlength: 6
+    },
+    inProgressTickets: {
+        type: Array
+    },
+    counter: {
+        type: Number,
+        default: 0
+    },
+    dayCounter: {
+        type: Number,
+        default: 0
     }
 },{
     timestamps: true

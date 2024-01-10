@@ -1,5 +1,9 @@
 const axios = require('axios');
 
+const viewTickets = (req, res) => {
+
+}
+
 const changeStatusFromParty = (req, res) =>{
     const id = req.params.id;
 
@@ -32,4 +36,5 @@ const changeStatusFromParty = (req, res) =>{
 
 module.exports = {
     changeStatusFromParty,
+    viewTickets
 }

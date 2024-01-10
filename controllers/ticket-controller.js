@@ -1,7 +1,9 @@
 const axios = require('axios');
+const Staff = require("../models/StaffMember");
 
 const viewTickets = (req, res) => {
-    axios.get('https://rakmun-api.rakega.online/service/complaint/view')
+    const id = req.user.id;
+    axios.get(`https://rakmun-api.rakega.online/service/complaint/view/${id}`)
         .then(response => {
             res.status(response.status).json(response.data);
         })
@@ -35,7 +37,7 @@ const filterTickets = (req, res)=>{
     const searchfactor = req.params.searchfactor; 
     
     if (!searchfactor) {
-        return res.status(400).json({ error: 'Missing or invalid id parameter' });
+        return res.status(400).json({ error: 'Missing or invalid search factor parameter' });
     }
 
     const apiUrl = `https://rakmun-api.rakega.online/service/complaint/filter/${searchfactor}`;
@@ -74,14 +76,50 @@ const updateStatusTicket = (req, res) => {
         });
 };
 
+const acceptRejectTicket = async(req, res) => {
+    const {choice} = req.body;
+    const ticketID = req.params.id;
+    if(choice == "accept"){
+        const status = "viewed by a staff";////////////////////////
+        axios.put(`https://rakmun-api.rakega.online/service/complaint/view/${ticketID}`,
+        {status}).then(response => {
+            res.status(response.status).json(response.data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
+        });
+    }else{
+        const status = "CANCELED";
 
-const routetothirdparty = (req, res) =>{
-    const id = req.params.id;
-    const { status } = req.body;
+        let staffID = req.user.id;
+        staffmem = await Staff.findById(staffID);
+        let newArray = staffmem.inProgressTickets.filter(ticket => ticket !== ticketID);
+        staff = await Staff.findByIdAndUpdate(
+            staffID,
+            {inProgressTickets: newArray},
+            { new: true }
+        );
 
-    const apiUrl = `https://rakmun-api.rakega.online/suppport/resolveTicket/${id}`;
+        axios.put(`https://rakmun-api.rakega.online/service/complaint/view/${ticketID}`,
+        {status}).then(response => {
+            res.status(response.status).json(response.data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
+        });
+    }
+}
 
-    axios.put(apiUrl, { status })
+
+const dispatchToThirdParty = (req, res) =>{
+    const partyID = req.params.partyID;
+    const  ticket  = req.body;
+
+    const apiUrl = `https://rakmun-api.rakega.online/suppport/resolveTicket/${partyID}`;
+
+    axios.put(apiUrl, { ticket })
         .then(response => {
             res.status(response.status).json(response.data);
         })
@@ -89,13 +127,12 @@ const routetothirdparty = (req, res) =>{
             console.error('Error:', error);
             res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
         });
-
-
-
 }
 module.exports = {
     viewTickets,
     viewTicket,
     filterTickets,
-    updateStatusTicket
+    updateStatusTicket,
+    dispatchToThirdParty,
+    acceptRejectTicket
 }

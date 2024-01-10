@@ -13,6 +13,9 @@ const ticketsRouter = require('./routes/ticket-router');
 const { startSQSListener } = require('./services/sqsService');
 const { handleSLAChecker } = require('./helpers/sqsMsgHandler');
 startSQSListener(process.env.CHECLSLA_URL, handleSLAChecker);
+const cron = require('node-cron');
+const Staff = require("./models/StaffMember");
+const axios = require('axios');
 
 
 // mongoose.connect('mongodb+srv://node-practice:L0o9czZTnjcEgYGQ@node-practice.4qdkfrr.mongodb.net/'
@@ -64,6 +67,53 @@ app.use(
     swaggerui.serve,
     swaggerui.setup(spacs)
 );
+
+//water manager cron
+// cron.schedule('*/5 * * * *', async () => {
+//     console.log('Cron job running every five minutes.');
+//     const category = "WATER";
+  
+//     try {
+//       const response = await axios.get('https://rakmun-api.rakega.online/service/complaint/view', { category });
+  
+//       const staffs = await Staff.find({
+//         department: category
+//       });
+  
+//       const threshold = 5;
+//       let minNumOfTickets = 10000000000000;
+//       let minStaff;
+  
+//       for (const ticket of response.data) {
+//         for (const staff of staffs) {
+//           let numOfTickets = staff.inProgressTickets.length;
+//           if (numOfTickets < minNumOfTickets && staff.dayCounter < threshold) {
+//             minStaff = staff;
+//             minNumOfTickets = numOfTickets;
+//           }
+//         }
+  
+//         minStaff.inProgressTickets.push(ticket._id);
+//         minStaffID = minStaff._id;
+//         minTicketID = ticket._id;
+  
+//         try {
+//           const updateResponse = await axios.put('https://rakmun-api.rakega.online/service/complaint/view', {
+//             minStaffID,
+//             minTicketID
+//           });
+//           console.log('Ticket updated successfully:', updateResponse.data);
+//         } catch (error) {
+//           console.error('Error updating ticket:', error);
+//         }
+//       }
+  
+//       console.log('Cron job completed.');
+//     } catch (error) {
+//       console.error('Error fetching tickets:', error);
+//     }
+//   });
+  
 
 const port = process.env.PORT || 3000;
 
