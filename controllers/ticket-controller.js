@@ -3,7 +3,7 @@ const Staff = require("../models/StaffMember");
 
 const viewTickets = (req, res) => {
     const id = req.user.id;
-    axios.get(`https://rakmun-api.rakega.online/service/complaint/view/${id}`)
+    axios.get(`https://rakmun-api.rakega.online/service/complaint/view`)
         .then(response => {
             res.status(response.status).json(response.data);
         })
