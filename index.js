@@ -69,50 +69,81 @@ app.use(
 );
 
 //water manager cron
-// cron.schedule('*/5 * * * *', async () => {
-//     console.log('Cron job running every five minutes.');
-//     const category = "WATER";
+cron.schedule('*/1 * * * *', async () => {
+    console.log('Cron job running every five minutes.');
+    const category = "Water";
   
-//     try {
-//       const response = await axios.get('https://rakmun-api.rakega.online/service/complaint/view', { category });
+    try {
+      const apiUrl = 'https://rakmun-api.rakega.online/service/complaint/openedComplaintsWithCategory';
+      
+
+      const response = await axios.get(apiUrl, { data: { category } });
+
+      console.log(response.data);
+
+      const staffs = await Staff.find({ department: category });
   
-//       const staffs = await Staff.find({
-//         department: category
-//       });
+      const threshold = 5;
+      let minNumOfTickets = 10000000000000;
+      let minStaff;
+      let minStaffID; 
   
-//       const threshold = 5;
-//       let minNumOfTickets = 10000000000000;
-//       let minStaff;
+      for (const ticket of response.data) {
+        for (const staff of staffs) {
+          // console.log(staff.dayCounter);
+          let numOfTickets = staff.inProgressTickets.length;
+          // console.log(numOfTickets);
+          if (numOfTickets < minNumOfTickets && staff.dayCounter < threshold) {
+            minStaff = staff;
+            // console.log(minStaff);
+            minNumOfTickets = numOfTickets;
+            // console.log(minNumOfTickets);
+          }else if(staff.dayCounter < threshold){
+            minStaff = staff;
+            minNumOfTickets = numOfTickets;
+          }else if(staff.dayCounter > threshold && numOfTickets < minNumOfTickets){
+            minStaff = staff;
+            minNumOfTickets = numOfTickets;
+          }
+        }
+
+        minStaff.inProgressTickets.push(ticket._id);
+            minStaffID = minStaff._id;
+            minTicketID = ticket._id;
+
+            let updatedStaff = await Staff.findByIdAndUpdate(
+              minStaff._id,
+              {
+                $set: { inProgressTickets: minStaff.inProgressTickets },
+                $inc: { dayCounter: 1 }
+              },
+              { new: true }
+            );
   
-//       for (const ticket of response.data) {
-//         for (const staff of staffs) {
-//           let numOfTickets = staff.inProgressTickets.length;
-//           if (numOfTickets < minNumOfTickets && staff.dayCounter < threshold) {
-//             minStaff = staff;
-//             minNumOfTickets = numOfTickets;
-//           }
-//         }
+        
+        // console.log(ticket._id);
+        // console.log(minStaff.inProgressTickets);
+        // console.log(minStaff);
+
+        const apiUrl2 = 'https://rakmun-api.rakega.online/service/complaint/assignComplaintToStaff';
+      
+
+        try {
+          const assignToStaffInTicket = await axios.put(apiUrl2, { minTicketID, minStaffID} );
+          console.log('Assign to staff successful:', assignToStaffInTicket.data);
+        } catch (assignError) {
+          console.error('Error assigning complaint to staff:', assignError.response ? assignError.response.data : assignError.message);
+        }
+        
+      
+
+      }
   
-//         minStaff.inProgressTickets.push(ticket._id);
-//         minStaffID = minStaff._id;
-//         minTicketID = ticket._id;
-  
-//         try {
-//           const updateResponse = await axios.put('https://rakmun-api.rakega.online/service/complaint/view', {
-//             minStaffID,
-//             minTicketID
-//           });
-//           console.log('Ticket updated successfully:', updateResponse.data);
-//         } catch (error) {
-//           console.error('Error updating ticket:', error);
-//         }
-//       }
-  
-//       console.log('Cron job completed.');
-//     } catch (error) {
-//       console.error('Error fetching tickets:', error);
-//     }
-//   });
+      console.log('Cron job completed.');
+    } catch (fetchError) {
+      console.error('Error fetching tickets:', fetchError.response.data || fetchError.message);
+    }
+  });
   
 
 const port = process.env.PORT || 3000;

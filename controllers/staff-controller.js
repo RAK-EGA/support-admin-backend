@@ -1,6 +1,7 @@
 const Staff = require("../models/StaffMember");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
@@ -204,6 +205,7 @@ const deleteMultiStaff = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+  
 
 const hi = (req, res) => {
     res.status(200).json({message:"hi suhail"});
