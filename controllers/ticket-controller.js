@@ -67,7 +67,7 @@ const updateStatusTicket = async(req, res) => {
 
     if(status == "RESOLVED"){
         let updatedStaff = await Staff.findByIdAndUpdate(
-            minStaff._id,
+            staffID,
             {
                 $inc: { dayCounter: 1 }
             },
@@ -77,7 +77,7 @@ const updateStatusTicket = async(req, res) => {
 
     let newArray = staffmem.inProgressTickets.filter(ticket => ticket !== ticketID);
     let updatedStaff = await Staff.findByIdAndUpdate(
-        minStaff._id,
+        staffID,
         {
             inProgressTickets: newArray,
         },
