@@ -52,9 +52,11 @@ const filterTickets = (req, res)=>{
         });
 }
 
-const updateStatusTicket = (req, res, status) => {
+const updateStatusTicket = (req, res) => {
     const id = req.params.id;
-    const { status } = req.body;
+    let {status} = req.body;
+    // console.log(body);
+    // console.log("gugfuguifeguirfdfuvhsyhgvwsufh ufyh hhrf hf uhwgh  hfhjoighgu huwhr8hshgirhgujurojgtru hvu uhiuthgjiuerngiuehg 9hurh igu rhyguieruhgiuhgih uirrhguuhyurhruhgeuighruthgn ue ih gruih 9uh yehguieh  by ree");
 
     if (!id) {
         return res.status(400).json({ error: 'Missing or invalid id parameter' });
