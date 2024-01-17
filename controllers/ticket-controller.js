@@ -55,7 +55,8 @@ const filterTickets = (req, res)=>{
 const updateStatusTicket = async(req, res) => {
     const id = req.params.id;
     let {status} = req.body;
-    const staffID = req.user._id;
+    const {ticket} = req.body;
+    const staffID = ticket.assignedTo;
 
     if (!id) {
         return res.status(400).json({ error: 'Missing or invalid id parameter' });
@@ -149,7 +150,7 @@ const dispatchToThirdParty = (req, res) => {
             console.error('Error:', error);
         });
 
-    axios.put(apiUrl)
+    axios.put(apiUrl, {ticket})
         .then(response => {
            
             console.log(response.data)

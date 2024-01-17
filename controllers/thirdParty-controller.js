@@ -6,7 +6,7 @@ const axios = require('axios');
 
 const changeStatusFromParty = (req, res) => {
     const ticketID = req.params.ticketID;
-    // const ticket = req.body;
+    const ticket = req.body;
     const randomNumber = Math.floor(Math.random() * 2) + 1;
     let status;
 
@@ -17,7 +17,7 @@ const changeStatusFromParty = (req, res) => {
     }
 
     const url = `https://rakmun-api.rakega.online/support/updateStatusTicket/${ticketID}`;
-    axios.put(url, { status })
+    axios.put(url, { status, ticket })
         .then(response => {
             res.json(response.data);
         })
