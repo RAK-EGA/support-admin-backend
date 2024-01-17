@@ -78,7 +78,7 @@ const updateStatusTicket = async(req, res) => {
         );
     }
 
-    let newArray = updatedStaff.inProgressTickets.filter(ticket => ticket !== ticketID);
+    let newArray = updatedStaff.inProgressTickets.filter(oneTicket => oneTicket !== ticket._id);
     let updatedStaffArray = await Staff.findByIdAndUpdate(
         staffID,
         {
