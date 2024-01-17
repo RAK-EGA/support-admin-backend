@@ -66,8 +66,10 @@ const updateStatusTicket = async(req, res) => {
         return res.status(400).json({ error: 'Missing status parameter in the request body' });
     }
 
+    let updatedStaff;
+
     if(status == "RESOLVED"){
-        let updatedStaff = await Staff.findByIdAndUpdate(
+        updatedStaff = await Staff.findByIdAndUpdate(
             staffID,
             {
                 $inc: { dayCounter: 1 }
@@ -76,8 +78,8 @@ const updateStatusTicket = async(req, res) => {
         );
     }
 
-    let newArray = staffmem.inProgressTickets.filter(ticket => ticket !== ticketID);
-    let updatedStaff = await Staff.findByIdAndUpdate(
+    let newArray = updatedStaff.inProgressTickets.filter(ticket => ticket !== ticketID);
+    let updatedStaffArray = await Staff.findByIdAndUpdate(
         staffID,
         {
             inProgressTickets: newArray,
