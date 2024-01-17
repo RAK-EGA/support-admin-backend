@@ -52,7 +52,7 @@ const filterTickets = (req, res)=>{
         });
 }
 
-const updateStatusTicket = (req, res) => {
+const updateStatusTicket = (req, res, status) => {
     const id = req.params.id;
     const { status } = req.body;
 
@@ -77,11 +77,12 @@ const updateStatusTicket = (req, res) => {
 };
 
 const acceptRejectTicket = async(req, res) => {
+    
     const {choice} = req.body;
     const ticketID = req.params.id;
     if(choice == "accept"){
-        const status = "viewed by a staff";////////////////////////
-        axios.put(`https://rakmun-api.rakega.online/service/complaint/view/${ticketID}`,
+        const status = "VIEWED_BY_STAFF";
+        axios.put(`https://rakmun-api.rakega.online/service/complaint/update/${ticketID}`,
         {status}).then(response => {
             res.status(response.status).json(response.data);
         })
@@ -89,8 +90,16 @@ const acceptRejectTicket = async(req, res) => {
             console.error('Error:', error);
             res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
         });
-    }else{
+    }else if(choice == "reject"){
         const status = "CANCELED";
+        axios.put(`https://rakmun-api.rakega.online/service/complaint/update/${ticketID}`,
+        {status}).then(response => {
+            res.status(response.status).json(response.data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
+        });
 
         let staffID = req.user.id;
         staffmem = await Staff.findById(staffID);
@@ -100,34 +109,36 @@ const acceptRejectTicket = async(req, res) => {
             {inProgressTickets: newArray},
             { new: true }
         );
-
-        axios.put(`https://rakmun-api.rakega.online/service/complaint/view/${ticketID}`,
-        {status}).then(response => {
-            res.status(response.status).json(response.data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
-        });
     }
 }
 
 
-const dispatchToThirdParty = (req, res) =>{
-    const partyID = req.params.partyID;
-    const  ticket  = req.body;
-
-    const apiUrl = `https://rakmun-api.rakega.online/suppport/resolveTicket/${partyID}`;
-
-    axios.put(apiUrl, { ticket })
+const dispatchToThirdParty = (req, res) => {
+    const ticket = req.body;
+    const ticketID = req.params.ticketID;
+    const apiUrl = `http://localhost:3000/support/resolveTicket/${ticketID}`;
+    axios.put(apiUrl)
         .then(response => {
             res.status(response.status).json(response.data);
         })
         .catch(error => {
             console.error('Error:', error);
-            res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'Internal Server Error' });
         });
-}
+
+        const status = "ASSIGNED_TO_CONCERNED_DEPARTMENT";
+        const apiUrl2 = `https://rakmun-api.rakega.online/service/complaint/update/${ticketID}`;
+        axios.put(apiUrl2, { status })
+            .then(response => {
+                res.status(response.status).json(response.data);
+            }).catch(error => {
+                console.error('Error:', error);
+                res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
+            });
+
+        
+        
+};
 module.exports = {
     viewTickets,
     viewTicket,
