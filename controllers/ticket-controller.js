@@ -52,11 +52,10 @@ const filterTickets = (req, res)=>{
         });
 }
 
-const updateStatusTicket = (req, res) => {
+const updateStatusTicket = async(req, res) => {
     const id = req.params.id;
     let {status} = req.body;
-    // console.log(body);
-    // console.log("gugfuguifeguirfdfuvhsyhgvwsufh ufyh hhrf hf uhwgh  hfhjoighgu huwhr8hshgirhgujurojgtru hvu uhiuthgjiuerngiuehg 9hurh igu rhyguieruhgiuhgih uirrhguuhyurhruhgeuighruthgn ue ih gruih 9uh yehguieh  by ree");
+    const staffID = req.user._id;
 
     if (!id) {
         return res.status(400).json({ error: 'Missing or invalid id parameter' });
@@ -65,6 +64,26 @@ const updateStatusTicket = (req, res) => {
     if (!status) {
         return res.status(400).json({ error: 'Missing status parameter in the request body' });
     }
+
+    if(status == "RESOLVED"){
+        let updatedStaff = await Staff.findByIdAndUpdate(
+            minStaff._id,
+            {
+                $inc: { dayCounter: 1 }
+            },
+            { new: true }
+        );
+    }
+
+    let newArray = staffmem.inProgressTickets.filter(ticket => ticket !== ticketID);
+    let updatedStaff = await Staff.findByIdAndUpdate(
+        minStaff._id,
+        {
+            inProgressTickets: newArray,
+        },
+        { new: true }
+    );
+
 
     const apiUrl = `https://rakmun-api.rakega.online/service/complaint/update/${id}`;
 
@@ -118,25 +137,28 @@ const acceptRejectTicket = async(req, res) => {
 const dispatchToThirdParty = (req, res) => {
     const ticket = req.body;
     const ticketID = req.params.ticketID;
-    const apiUrl = `http://localhost:3000/support/resolveTicket/${ticketID}`;
+    const apiUrl = `https://rakmun-api.rakega.online/support/resolveTicket/${ticketID}`;
+    const apiUrl2 = `https://rakmun-api.rakega.online/service/complaint/update/${ticketID}`;
+
+    const status = "ASSIGNED_TO_CONCERNED_DEPARTMENT";
+    
+    axios.put(apiUrl2, { status })
+        .then(response => {
+            console.log(response.data)
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+
     axios.put(apiUrl)
         .then(response => {
-            res.status(response.status).json(response.data);
+           
+            console.log(response.data)
+            res.json(response.data);
         })
         .catch(error => {
             console.error('Error:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         });
-
-        const status = "ASSIGNED_TO_CONCERNED_DEPARTMENT";
-        const apiUrl2 = `https://rakmun-api.rakega.online/service/complaint/update/${ticketID}`;
-        axios.put(apiUrl2, { status })
-            .then(response => {
-                res.status(response.status).json(response.data);
-            }).catch(error => {
-                console.error('Error:', error);
-                res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
-            });
 
         
         

@@ -115,7 +115,7 @@ app.use(
 //               minStaff._id,
 //               {
 //                 $set: { inProgressTickets: minStaff.inProgressTickets },
-//                 $inc: { dayCounter: 1 }
+//                 $inc: { counter: 1 }
 //               },
 //               { new: true }
 //             );

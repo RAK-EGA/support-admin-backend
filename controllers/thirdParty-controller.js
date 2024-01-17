@@ -5,7 +5,6 @@ const axios = require('axios');
 // }
 
 const changeStatusFromParty = (req, res) => {
-    console.log("console.error(hejfjjfvlsfjvfjhdjkhvjhfcjkwdhcfjkhsdjlcnjkfgjkehjkzxn jkahxxushankljdfklwmfgkngvklwbhcjk axgbhguishdjweklfhnlerjfioer irfh oeruhfierhifgerjtkgmgnlrg;pkdwe");
     const ticketID = req.params.ticketID;
     // const ticket = req.body;
     const randomNumber = Math.floor(Math.random() * 2) + 1;
@@ -17,13 +16,14 @@ const changeStatusFromParty = (req, res) => {
         status = "CANCELED";
     }
 
-    axios.put(`https://rakmun-api.rakega.online/support/updateStatusTicket/${ticketID}`, { status })
+    const url = `https://rakmun-api.rakega.online/support/updateStatusTicket/${ticketID}`;
+    axios.put(url, { status })
         .then(response => {
-            res.status(response.status).json(response.data);
+            res.json(response.data);
         })
         .catch(error => {
             console.error('Error:', error);
-            res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'Internal Server Error' });
         });
 };
 
