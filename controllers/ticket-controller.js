@@ -56,8 +56,7 @@ const updateStatusTicket = async(req, res) => {
     const id = req.params.id;
     let {status} = req.body;
     const {ticket} = req.body;
-    const staffID = ticket.assignedTo;
-
+    const staffID = ticket.ticket.assignedTo;
     if (!id) {
         return res.status(400).json({ error: 'Missing or invalid id parameter' });
     }
@@ -66,10 +65,9 @@ const updateStatusTicket = async(req, res) => {
         return res.status(400).json({ error: 'Missing status parameter in the request body' });
     }
 
-    let updatedStaff;
-
     if(status == "RESOLVED"){
-        updatedStaff = await Staff.findByIdAndUpdate(
+
+        await Staff.findByIdAndUpdate(
             staffID,
             {
                 $inc: { dayCounter: 1 }
@@ -78,10 +76,10 @@ const updateStatusTicket = async(req, res) => {
         );
     }
 
-    console.log(updatedStaff);
+    const updatedStaff = await Staff.findById(staffID);
 
     let newArray = updatedStaff.inProgressTickets.filter(oneTicket => oneTicket !== ticket._id);
-    let updatedStaffArray = await Staff.findByIdAndUpdate(
+    await Staff.findByIdAndUpdate(
         staffID,
         {
             inProgressTickets: newArray,
@@ -149,25 +147,20 @@ const dispatchToThirdParty = (req, res) => {
     
     axios.put(apiUrl2, { status })
         .then(response => {
-            console.log(response.data)
+            // res.json(response.data);
         }).catch(error => {
             console.error('Error:', error);
         });
 
     axios.put(apiUrl, {ticket})
         .then(response => {
-           
-            console.log(response.data)
             res.json(response.data);
         })
         .catch(error => {
             console.error('Error:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
         });
-
-        
-        
 };
+
 module.exports = {
     viewTickets,
     viewTicket,
