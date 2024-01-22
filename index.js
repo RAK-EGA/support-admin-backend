@@ -119,11 +119,6 @@ app.use(
 //               },
 //               { new: true }
 //             );
-  
-        
-//         // console.log(ticket._id);
-//         // console.log(minStaff.inProgressTickets);
-//         // console.log(minStaff);
 
 //         const apiUrl2 = 'https://rakmun-api.rakega.online/service/complaint/assignComplaintToStaff';
       

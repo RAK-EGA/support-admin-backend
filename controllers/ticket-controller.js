@@ -1,9 +1,11 @@
 const axios = require('axios');
 const Staff = require("../models/StaffMember");
 
-const viewTickets = (req, res) => {
-    const id = req.user.id;
-    axios.get(`https://rakmun-api.rakega.online/service/complaint/view`)
+const viewMyAcceptedTickets = (req, res) => {
+    const assignedTo = req.user.id;
+    console.log(assignedTo);
+    axios.get(`https://rakmun-api.rakega.online/service/complaint/viewComplaintsWithIdandViewedByStaff`,
+    {data:{assignedTo}})
         .then(response => {
             res.status(response.status).json(response.data);
         })
@@ -12,6 +14,21 @@ const viewTickets = (req, res) => {
             res.status(error.response.status || 500).json({ error: 'Internal Server Error' });
         });
 };
+
+const viewMyAssignedTickets = (req, res) => {
+    const assignedTo = req.user.id;
+    console.log(assignedTo);
+    axios.get(`https://rakmun-api.rakega.online/service/complaint/viewComplaintsWithIdandOpen`,
+    {data:{assignedTo}})
+        .then(response => {
+            res.status(response.status).json(response.data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(error.response.status || 500).json({ error: 'Internal Server Error' });
+        });
+};
+
 
 const viewTicket = (req, res) => {
     const id = req.params.ticketId; 
@@ -162,7 +179,8 @@ const dispatchToThirdParty = (req, res) => {
 };
 
 module.exports = {
-    viewTickets,
+    viewMyAcceptedTickets,
+    viewMyAssignedTickets,
     viewTicket,
     filterTickets,
     updateStatusTicket,

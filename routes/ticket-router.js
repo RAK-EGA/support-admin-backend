@@ -3,7 +3,8 @@ const router = express.Router();
 const ticketController = require('../controllers/ticket-controller');
 const validateToken = require('../middleware/validateTokenHandler');
 
-router.get('/support/viewTickets', validateToken, ticketController.viewTickets);
+router.get('/support/viewAcceptedTickets', validateToken, ticketController.viewMyAcceptedTickets);
+router.get('/support/viewAssignedTickets', validateToken, ticketController.viewMyAssignedTickets);
 router.get('/support/viewTicket/:ticketId', validateToken, ticketController.viewTicket);
 router.get('/support/filterTickets/:searchfactor', validateToken, ticketController.filterTickets);
 router.put('/support/updateStatusTicket/:id', ticketController.updateStatusTicket);
