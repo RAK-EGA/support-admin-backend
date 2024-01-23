@@ -68,77 +68,155 @@ app.use(
     swaggerui.setup(spacs)
 );
 
-//water manager cron
-// cron.schedule('*/1 * * * *', async () => {
-//     console.log('Cron job running every five minutes.');
-//     const category = "Water";
+//Reset dayCounter every 24 hours
+cron.schedule('0 0 * * *', async() => {  
+    try {
+        const staffMembers = await Staff.find();
+        await Promise.all(
+          staffMembers.map(async (staffMember) => {
+            await Staff.findByIdAndUpdate(staffMember._id, { dayCounter: 0 });
+          })
+        );
+        console.log('Cron job: dayCounter reset for all staff members.');
+      } catch (error) {
+        console.error('Cron job error:', error);
+      }
+  });
+
+//Reset counter every 30 days
+cron.schedule('0 0 */30 * *', async () => {
+    try {
+      const staffMembers = await Staff.find();
+      await Promise.all(
+        staffMembers.map(async (staffMember) => {
+          await Staff.findByIdAndUpdate(staffMember._id, { counter: 0 });
+        })
+      );
+      console.log('Cron job: counter reset for all staff members.');
+    } catch (error) {
+      console.error('Cron job error:', error);
+    }
+  });
+
+//Automatic Assignment Logic
+cron.schedule('*/5 * * * *', async () => {
+    let complaintResponse = await axios.get("https://rakmun-api.rakega.online/service/service/getcategories");
+    let complaintsCategories = complaintResponse.data.departmentNames;
+
+    let permitsResponse = await axios.get("https://rakmun-api.rakega.online/service/service/requestsnames");
+    let permitsCategories = permitsResponse.data.serviceNames
+
+    // const categories = [...complaintsCategories, ...permitsCategories];
+    // console.log(categories);
   
-//     try {
-//       const apiUrl = 'https://rakmun-api.rakega.online/service/complaint/openedComplaintsWithCategory';
-      
-
-//       const response = await axios.get(apiUrl, { data: { category } });
-
-//       console.log(response.data);
-
-//       const staffs = await Staff.find({ department: category });
-  
-//       const threshold = 5;
-//       let minNumOfTickets = 10000000000000;
-//       let minStaff;
-//       let minStaffID; 
-  
-//       for (const ticket of response.data) {
-//         for (const staff of staffs) {
-//           // console.log(staff.dayCounter);
-//           let numOfTickets = staff.inProgressTickets.length;
-//           // console.log(numOfTickets);
-//           if (numOfTickets < minNumOfTickets && staff.dayCounter < threshold) {
-//             minStaff = staff;
-//             // console.log(minStaff);
-//             minNumOfTickets = numOfTickets;
-//             // console.log(minNumOfTickets);
-//           }else if(staff.dayCounter < threshold){
-//             minStaff = staff;
-//             minNumOfTickets = numOfTickets;
-//           }else if(staff.dayCounter > threshold && numOfTickets < minNumOfTickets){
-//             minStaff = staff;
-//             minNumOfTickets = numOfTickets;
-//           }
-//         }
-
-//         minStaff.inProgressTickets.push(ticket._id);
-//             minStaffID = minStaff._id;
-//             minTicketID = ticket._id;
-
-//             let updatedStaff = await Staff.findByIdAndUpdate(
-//               minStaff._id,
-//               {
-//                 $set: { inProgressTickets: minStaff.inProgressTickets },
-//                 $inc: { counter: 1 }
-//               },
-//               { new: true }
-//             );
-
-//         const apiUrl2 = 'https://rakmun-api.rakega.online/service/complaint/assignComplaintToStaff';
-      
-
-//         try {
-//           const assignToStaffInTicket = await axios.put(apiUrl2, { minTicketID, minStaffID} );
-//           console.log('Assign to staff successful:', assignToStaffInTicket.data);
-//         } catch (assignError) {
-//           console.error('Error assigning complaint to staff:', assignError.response ? assignError.response.data : assignError.message);
-//         }
+    try {
+        for (let category of complaintsCategories) {
+            const apiUrl = 'https://rakmun-api.rakega.online/service/complaint/openedComplaintsWithCategory';
         
-      
+            const response = await axios.get(apiUrl, { data: { category } });
+        
+            const staffs = await Staff.find({ department: category });
+        
+            const threshold = 5;
+            let minNumOfTickets = 10000000000000;
+            let minStaff;
+            let minStaffID;
+        
+            if (response.data && response.data.length > 0) {
+                for (const ticket of response.data) {
+                    for (const staff of staffs) {
+                        let numOfTickets = staff.inProgressTickets.length;
+                        if (numOfTickets < minNumOfTickets && staff.dayCounter < threshold) {
+                            minStaff = staff;
+                            minNumOfTickets = numOfTickets;
+                        } else if (staff.dayCounter < threshold) {
+                            minStaff = staff;
+                            minNumOfTickets = numOfTickets;
+                        } else if (staff.dayCounter > threshold && numOfTickets < minNumOfTickets) {
+                            minStaff = staff;
+                            minNumOfTickets = numOfTickets;
+                        }
+                    }
+        
+                    minStaff.inProgressTickets.push(ticket._id);
+                    minStaffID = minStaff._id;
+                    minTicketID = ticket._id;
+        
+                    let updatedStaff = await Staff.findByIdAndUpdate(
+                        minStaff._id,
+                        {
+                            $set: { inProgressTickets: minStaff.inProgressTickets },
+                            $inc: { counter: 1 }
+                        },
+                        { new: true }
+                    );
+        
+                    const apiUrl2 = 'https://rakmun-api.rakega.online/service/complaint/assignComplaintToStaff';
+        
+                    const assignToStaffInTicket = await axios.put(apiUrl2, { minTicketID, minStaffID });
+                    console.log('Assign to staff successful:', assignToStaffInTicket.data);
+                }
+            } else {
+                console.log(`Response data is empty for category: ${category}`);
+                continue; 
+            }
+        }
 
-//       }
-  
-//       console.log('Cron job completed.');
-//     } catch (fetchError) {
-//       console.error('Error fetching tickets:', fetchError.response.data || fetchError.message);
-//     }
-//   });
+        for (let category of permitsCategories) {
+            const apiUrl = 'https://rakmun-api.rakega.online/service/request/openedRequestsWithCategory';
+        
+            const response = await axios.get(apiUrl, { data: { category } });
+        
+            const staffs = await Staff.find({ department: category });
+        
+            const threshold = 5;
+            let minNumOfTickets = 10000000000000;
+            let minStaff;
+            let minStaffID;
+        
+            if (response.data && response.data.length > 0) {
+                for (const ticket of response.data) {
+                    for (const staff of staffs) {
+                        let numOfTickets = staff.inProgressTickets.length;
+                        if (numOfTickets < minNumOfTickets && staff.dayCounter < threshold) {
+                            minStaff = staff;
+                            minNumOfTickets = numOfTickets;
+                        } else if (staff.dayCounter < threshold) {
+                            minStaff = staff;
+                            minNumOfTickets = numOfTickets;
+                        } else if (staff.dayCounter > threshold && numOfTickets < minNumOfTickets) {
+                            minStaff = staff;
+                            minNumOfTickets = numOfTickets;
+                        }
+                    }
+        
+                    minStaff.inProgressTickets.push(ticket._id);
+                    minStaffID = minStaff._id;
+                    minTicketID = ticket._id;
+        
+                    let updatedStaff = await Staff.findByIdAndUpdate(
+                        minStaff._id,
+                        {
+                            $set: { inProgressTickets: minStaff.inProgressTickets },
+                            $inc: { counter: 1 }
+                        },
+                        { new: true }
+                    );
+        
+                    const apiUrl2 = 'https://rakmun-api.rakega.online/service/request/assignRequestToStaff';
+        
+                    const assignToStaffInTicket = await axios.put(apiUrl2, { minTicketID, minStaffID });
+                    console.log('Assign to staff successful:', assignToStaffInTicket.data);
+                }
+            } else {
+                console.log(`Response data is empty for category: ${category}`);
+                continue; 
+            }
+        }
+    } catch (fetchError) {
+      console.error('Error fetching tickets:', fetchError.response.data || fetchError.message);
+    }
+  });
   
 
 const port = process.env.PORT || 3000;

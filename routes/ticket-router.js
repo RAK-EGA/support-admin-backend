@@ -9,6 +9,6 @@ router.get('/support/viewTicket/:ticketId', validateToken, ticketController.view
 router.get('/support/filterTickets/:searchfactor', validateToken, ticketController.filterTickets);
 router.put('/support/updateStatusTicket/:id', ticketController.updateStatusTicket);
 router.put('/support/acceptRejectTicket/:id', validateToken, ticketController.acceptRejectTicket);
-router.put('/support/dispatchtothirdparty/:ticketID', ticketController.dispatchToThirdParty);
+router.put('/support/dispatchtothirdparty/:ticketID', validateToken, ticketController.dispatchToThirdParty);
 
 module.exports = router;

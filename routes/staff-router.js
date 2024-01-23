@@ -229,6 +229,7 @@ const staffController = require('../controllers/staff-controller');
 const validateToken = require('../middleware/validateTokenHandler');
 
 router.post('/support/signin', staffController.signin);
+router.get('/support/refreshToken', validateToken,staffController.refreshToken);
 router.post('/support/addstaff',   staffController.addstaff);
 router.get('/support/viewstaffs', staffController.viewstaffs);
 router.get('/support/viewstaff/:staffID', staffController.viewstaff);

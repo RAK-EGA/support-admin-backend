@@ -3,7 +3,6 @@ const Staff = require("../models/StaffMember");
 
 const viewMyAcceptedTickets = (req, res) => {
     const assignedTo = req.user.id;
-    console.log(assignedTo);
     axios.get(`https://rakmun-api.rakega.online/service/complaint/viewComplaintsWithIdandViewedByStaff`,
     {data:{assignedTo}})
         .then(response => {
@@ -17,7 +16,6 @@ const viewMyAcceptedTickets = (req, res) => {
 
 const viewMyAssignedTickets = (req, res) => {
     const assignedTo = req.user.id;
-    console.log(assignedTo);
     axios.get(`https://rakmun-api.rakega.online/service/complaint/viewComplaintsWithIdandOpen`,
     {data:{assignedTo}})
         .then(response => {
@@ -28,6 +26,19 @@ const viewMyAssignedTickets = (req, res) => {
             res.status(error.response.status || 500).json({ error: 'Internal Server Error' });
         });
 };
+
+const viewMyComplaintsHistory = (req, res)=>{
+    const assignedTo = req.user.id;
+    axios.get(`https://rakmun-api.rakega.online/service/request/viewRequestsWithIdandViewedByStaff`, ///////////
+    {data:{assignedTo}})
+        .then(response => {
+            res.status(response.status).json(response.data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(error.response.status || 500).json({ error: 'Internal Server Error' });
+        });
+}
 
 
 const viewTicket = (req, res) => {
@@ -118,7 +129,6 @@ const updateStatusTicket = async(req, res) => {
 };
 
 const acceptRejectTicket = async(req, res) => {
-    
     const {choice} = req.body;
     const ticketID = req.params.id;
     if(choice == "accept"){
@@ -185,5 +195,6 @@ module.exports = {
     filterTickets,
     updateStatusTicket,
     dispatchToThirdParty,
-    acceptRejectTicket
+    acceptRejectTicket,
+    viewMyComplaintsHistory
 }
