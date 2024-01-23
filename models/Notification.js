@@ -3,15 +3,29 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const notificationSchema = new Schema({
+    type: {
+        type: String,
+        required: true
+    },
     ticketID: {
         type: String,
         required: true
     },
-    category: {
+    citizenID: {
         type: String,
         required: true
     },
-    subCategory: {
+    category: {
+        type: String
+    },
+    serviceName: {
+        type: String
+    },
+    sla_value: {
+        type: Number,
+        required: true
+    },
+    sla_unit: {
         type: String,
         required: true
     },
@@ -19,11 +33,14 @@ const notificationSchema = new Schema({
         type: String,
         required: true
     },
-    description: {
+    location: {
+        type: String
+    },
+    assignedTo: {
         type: String,
         required: true
     },
-    SLAExceedTime: {
+    slaExceedTime: {
         type: Number,
         required: true
     },
@@ -31,4 +48,4 @@ const notificationSchema = new Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model("announcement", announcementSchema);
+module.exports = mongoose.model("notification", notificationSchema);

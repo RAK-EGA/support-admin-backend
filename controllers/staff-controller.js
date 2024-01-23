@@ -12,7 +12,7 @@ const signin = async (req, res) => {
         return;
       }
   
-      const user = await Staff.findOne({ email }).select('-password');
+      const user = await Staff.findOne({ email }).select('+password'); // Include the password field for verification
   
       if (!user) {
         res.status(404).json({ message: "This email is not registered!" });
@@ -22,19 +22,18 @@ const signin = async (req, res) => {
       const isMatch = await bcrypt.compare(password, user.password);
   
       if (isMatch) {
+        // User authenticated successfully
+        const { _id, name, email, department } = user; // Selectively choose fields to include in the response
+  
         const accessToken = jwt.sign(
           {
-            user: {
-              id: user._id,
-              name: user.name,
-              email: user.email,
-              department: user.department,
-            },
+            user: { id: _id, name, email, department },
           },
           process.env.ACCESS_TOKEN_SECRET,
           { expiresIn: "30m" }
         );
-        res.status(200).json({ user, accessToken });
+  
+        res.status(200).json({ user: { id: _id, name, email, department }, accessToken });
       } else {
         res.status(400).json({ message: "Incorrect password!!" });
       }
@@ -42,7 +41,9 @@ const signin = async (req, res) => {
       console.error(error);
       res.status(500).json({ message: "Internal server error" });
     }
-};
+  };
+  
+  
 
 const viewstaffs = async (req, res) => {
     let users;
