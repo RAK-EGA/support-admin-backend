@@ -230,7 +230,7 @@ const validateToken = require('../middleware/validateTokenHandler');
 
 router.post('/support/signin', staffController.signin);
 router.get('/support/refreshToken', validateToken,staffController.refreshToken);
-router.post('/support/addstaff',   staffController.addstaff);
+router.post('/support/addstaff', staffController.addstaff);
 router.get('/support/viewstaffs', staffController.viewstaffs);
 router.get('/support/viewstaff/:staffID', staffController.viewstaff);
 router.get('/support/viewprofile',  validateToken, staffController.viewprofile);

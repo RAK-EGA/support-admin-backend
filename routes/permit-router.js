@@ -7,7 +7,7 @@ router.get('/support/viewAcceptedPermits', validateToken, permitController.viewM
 router.get('/support/viewAssignedPermits', validateToken, permitController.viewMyAssignedPermits);
 router.get('/support/viewPermitsHistory', validateToken, permitController.viewMyPermitsHistory);
 router.get('/support/viewPermit/:permitId', validateToken, permitController.viewPermit);
-router.get('/support/filterPermits', validateToken, permitController.filterPermits);
+router.get('/support/filterPermits/:searchfactor', validateToken, permitController.filterPermits);
 router.get('/support/updatestatuspermit', validateToken, permitController.updateStatusPermit);
 router.put('/support/acceptRejectPermit/:id', validateToken, permitController.acceptRejectPermit);
 router.put('/support/dispatchPermittothirdparty/:ticketID', permitController.dispatchPermitToThirdParty);

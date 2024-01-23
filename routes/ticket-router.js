@@ -4,6 +4,7 @@ const ticketController = require('../controllers/ticket-controller');
 const validateToken = require('../middleware/validateTokenHandler');
 
 router.get('/support/viewAcceptedTickets', validateToken, ticketController.viewMyAcceptedTickets);
+router.get('/support/viewcomplaintshistory', validateToken, ticketController.viewMyComplaintsHistory);
 router.get('/support/viewAssignedTickets', validateToken, ticketController.viewMyAssignedTickets);
 router.get('/support/viewTicket/:ticketId', validateToken, ticketController.viewTicket);
 router.get('/support/filterTickets/:searchfactor', validateToken, ticketController.filterTickets);

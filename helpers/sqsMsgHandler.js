@@ -2,48 +2,59 @@ const Notification = require('../models/Notification');
 
 const handleSLAChecker = async (message) => {
     try {
-      const exceedingSLA = JSON.parse(message.Body);
-      const commonAttributes = {
-        ticketID: exceedingSLA._id,
-        citizenID: exceedingSLA.citizenID,
-        status: exceedingSLA.status,
-        sla_value: exceedingSLA.sla_value,
-        sla_unit: exceedingSLA.sla_unit,
-        slaExceedTime: exceedingSLA.slaExceedTime,
-      };
-      console.log(commonAttributes);
+      const body = JSON.parse(message.Body);
   
-      if (exceedingSLA.serviceName) {
-        const notification = new Notification({
-          ...commonAttributes,
-          serviceName: exceedingSLA.serviceName,
-          assignedTo: exceedingSLA.assignedTo,
-          type: 'permit',
-          location: '', 
-          category: undefined, 
-        });
-
-        await notification.save();
-        console.log(notification);
+      if (!body.detail || (!body.detail.complain && !body.detail.request)) {
+        console.log('Invalid message format, missing complain or request details.');
+        return;
       }
-      else if (exceedingSLA.category) {
-        const notification = new Notification({
-          ...commonAttributes,
-          category: exceedingSLA.category,
-          assignedTo: exceedingSLA.assignedTo,
-          type: 'complaint',
-          location: exceedingSLA.location,
-          serviceName: '',
-        });
   
-        await notification.save();
-        console.log(notification);
+      let commonAttributes;
+  
+      if (body.detail.complain) {
+        const complaintExceedingSLA = body.detail.complain;
+  
+        commonAttributes = {
+          ticketID: complaintExceedingSLA._id,
+          citizenID: complaintExceedingSLA.citizenID,
+          status: complaintExceedingSLA.status,
+          sla_value: complaintExceedingSLA.sla_value,
+          sla_unit: complaintExceedingSLA.sla_unit,
+          slaExceedTime: body.detail.slaExceededTime,
+          location: complaintExceedingSLA.location,
+          category: complaintExceedingSLA.category,
+          assignedTo: complaintExceedingSLA.assignedTo,
+          type: "complaint"
+        };
+  
+      } else if (body.detail.request) {
+        const requestExceedingSLA = body.detail.request;
+  
+        commonAttributes = {
+          ticketID: requestExceedingSLA._id,
+          citizenID: requestExceedingSLA.citizenID,
+          status: requestExceedingSLA.status,
+          sla_value: requestExceedingSLA.sla_value,
+          sla_unit: requestExceedingSLA.sla_unit,
+          slaExceedTime: body.detail.slaExceededTime,
+          serviceName: requestExceedingSLA.serviceName,
+          assignedTo: requestExceedingSLA.assignedTo,
+          type: "permit"
+        };
       } else {
-        console.log('Invalid message format, neither Permit nor Complaint.');
+        console.log('Invalid message format, neither complain nor request.');
+        return;
       }
+  
+      const notification = new Notification(commonAttributes);
+      await notification.save();
+  
+      console.log('Notification saved successfully:', notification);
+  
     } catch (error) {
       console.error('Error processing SLA checker message:', error);
     }
   };
-
+  
+  
 module.exports = { handleSLAChecker }

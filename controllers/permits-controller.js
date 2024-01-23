@@ -29,7 +29,7 @@ const viewMyAssignedPermits = (req, res)=>{
 
 const viewMyPermitsHistory = (req, res)=>{
     const assignedTo = req.user.id;
-    axios.get(`https://rakmun-api.rakega.online/service/request/viewRequestsWithIdandViewedByStaff`, ///////////
+    axios.get(`https://rakmun-api.rakega.online/service/request/getTicketWithStaffID`,
     {data:{assignedTo}})
         .then(response => {
             res.status(response.status).json(response.data);
@@ -60,7 +60,22 @@ const viewPermit = (req, res)=>{
 }
 
 const filterPermits = (req, res)=>{
+    const searchfactor = req.params.searchfactor; 
+    const assignedTo = req.user._id;
+    if (!searchfactor) {
+        return res.status(400).json({ error: 'Missing or invalid search factor parameter' });
+    }
 
+    const apiUrl = `https://rakmun-api.rakega.online/service/request/filter/${searchfactor}`;
+
+    axios.get(apiUrl, {data:{assignedTo}})
+        .then(response => {
+            res.status(response.status).json(response.data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            res.status(error.response ? error.response.status : 500).json({ error: 'Internal Server Error' });
+        });
 }
 
 const updateStatusPermit = async(req, res)=>{

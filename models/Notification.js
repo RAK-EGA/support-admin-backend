@@ -44,6 +44,10 @@ const notificationSchema = new Schema({
         type: Number,
         required: true
     },
+    isSeen: {
+        type: String,
+        default: "false"
+    },
 },{
     timestamps: true
 });

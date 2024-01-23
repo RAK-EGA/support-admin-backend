@@ -29,7 +29,7 @@ const viewMyAssignedTickets = (req, res) => {
 
 const viewMyComplaintsHistory = (req, res)=>{
     const assignedTo = req.user.id;
-    axios.get(`https://rakmun-api.rakega.online/service/request/viewRequestsWithIdandViewedByStaff`, ///////////
+    axios.get(`https://rakmun-api.rakega.online/service/complaint/getTicketWithStaffID`,
     {data:{assignedTo}})
         .then(response => {
             res.status(response.status).json(response.data);
@@ -63,14 +63,14 @@ const viewTicket = (req, res) => {
 
 const filterTickets = (req, res)=>{
     const searchfactor = req.params.searchfactor; 
-    
+    const assignedTo = req.user._id;
     if (!searchfactor) {
         return res.status(400).json({ error: 'Missing or invalid search factor parameter' });
     }
 
     const apiUrl = `https://rakmun-api.rakega.online/service/complaint/filter/${searchfactor}`;
 
-    axios.get(apiUrl)
+    axios.get(apiUrl, {data:{assignedTo}})
         .then(response => {
             res.status(response.status).json(response.data);
         })
