@@ -83,7 +83,7 @@ const filterTickets = (req, res)=>{
 const updateStatusTicket = async(req, res) => {
     const id = req.params.id;
     let {status} = req.body;
-    const {ticket} = req.body.data;
+    const {ticket} = req.body;
     const staffID = ticket.ticket.assignedTo;
 
     if (!id) {

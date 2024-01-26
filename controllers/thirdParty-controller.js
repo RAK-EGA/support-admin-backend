@@ -16,7 +16,7 @@ const changeStatusFromParty = (req, res) => {
         status = "CANCELED";
     }
 
-    const url = `https://rakmun-api.rakega.online/support/updateStatusTicket/${ticketID}`;
+    const url = `http://localhost:3000/support/updateStatusTicket/${ticketID}`;//////////
     axios.put(url, { status, ticket })
         .then(response => {
             res.json(response.data);

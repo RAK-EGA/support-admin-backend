@@ -129,7 +129,7 @@ const updateStatusPermit = async(req, res)=>{
 const dispatchPermitToThirdParty = (req, res)=>{
     const ticket = req.body;
     const ticketID = req.params.ticketID;
-    const apiUrl = `https://rakmun-api.rakega.online/support/resolveTicket/${ticketID}`;
+    const apiUrl = `http://localhost:3000/support/resolveTicket/${ticketID}`;
     const apiUrl2 = `https://rakmun-api.rakega.online/service/request/updateRequest/${ticketID}`;
 
     const status = "ASSIGNED_TO_CONCERNED_DEPARTMENT";
@@ -141,7 +141,7 @@ const dispatchPermitToThirdParty = (req, res)=>{
             console.error('Error:', error);
         });
 
-    axios.put(apiUrl, ticket)
+    axios.put(apiUrl, {ticket})
         .then(response => {
             res.json(response.data);
         })
