@@ -49,8 +49,6 @@ const handleSLAChecker = async (message) => {
       const notification = new Notification(commonAttributes);
       await notification.save();
   
-      console.log('Notification saved successfully:', notification);
-  
     } catch (error) {
       console.error('Error processing SLA checker message:', error);
     }

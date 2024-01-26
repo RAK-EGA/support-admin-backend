@@ -141,7 +141,7 @@ const dispatchPermitToThirdParty = (req, res)=>{
             console.error('Error:', error);
         });
 
-    axios.put(apiUrl, {ticket})
+    axios.put(apiUrl, ticket)
         .then(response => {
             res.json(response.data);
         })

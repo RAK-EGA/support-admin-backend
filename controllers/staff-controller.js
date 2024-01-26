@@ -42,8 +42,6 @@ const signin = async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
   };
-  
-  
 
 const viewstaffs = async (req, res) => {
     let users;
@@ -257,9 +255,11 @@ const deleteMultiStaff = async (req, res) => {
 
 const refreshToken = async (req, res) => {
     const email = req.user.email;
-    
+
     try {
         const staff = await Staff.findOne({ email: email });
+
+        console.log(staff);
 
         if (!email || !staff) {
             res.status(404).json({ message: "Staff not found" });
@@ -270,34 +270,30 @@ const refreshToken = async (req, res) => {
             _id: staff._id,
             name: staff.name,
             email: staff.email,
-            department: staff.department,
-            inProgressTickets: staff.inProgressTickets,
-            counter: staff.counter,
-            dayCounter: staff.dayCounter,
-            createdAt: staff.createdAt,
-            updatedAt: staff.updatedAt,
-            __v: staff.__v
+            department: staff.department
         };
 
-        const accessToken = jwt.sign(
+        const refreshToken = jwt.sign(
             {
-                staff: {
-                    id: staff._id,
-                    name: staff.name,
-                    email: staff.email,
-                    department: staff.department,
+                user: {
+                    id: staffData._id,
+                    name: staffData.name,
+                    email: staffData.email,
+                    department: staffData.department,
                 },
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "30m" }
+            { expiresIn: "30m" } // Set your desired expiration time
         );
 
-        res.status(200).json({ staff: staffData, accessToken });
+        res.status(200).json({ user: staffData, refreshToken });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+
 
 module.exports = refreshToken;
 
