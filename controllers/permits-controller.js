@@ -41,7 +41,7 @@ const viewMyPermitsHistory = (req, res)=>{
 }
 
 const viewPermit = (req, res)=>{
-    const id = req.params.ticketId; 
+    const id = req.params.permitId; 
     
     if (!id) {
         return res.status(400).json({ error: 'Missing or invalid id parameter' });

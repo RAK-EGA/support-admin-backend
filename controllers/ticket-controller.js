@@ -83,8 +83,9 @@ const filterTickets = (req, res)=>{
 const updateStatusTicket = async(req, res) => {
     const id = req.params.id;
     let {status} = req.body;
-    const {ticket} = req.body;
+    const {ticket} = req.body.data;
     const staffID = ticket.ticket.assignedTo;
+
     if (!id) {
         return res.status(400).json({ error: 'Missing or invalid id parameter' });
     }
@@ -115,8 +116,12 @@ const updateStatusTicket = async(req, res) => {
         { new: true }
     );
 
-
-    const apiUrl = `https://rakmun-api.rakega.online/service/complaint/update/${id}`;
+    let apiUrl;
+    if(ticket.ticket.category){
+        apiUrl = `https://rakmun-api.rakega.online/service/complaint/update/${id}`;
+    }else if(ticket.ticket.serviceName){
+        apiUrl = `https://rakmun-api.rakega.online/service/request/updateRequest/${id}`;
+    }
 
     axios.put(apiUrl, { status })
         .then(response => {
