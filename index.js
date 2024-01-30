@@ -102,21 +102,18 @@ cron.schedule('0 0 */30 * *', async () => {
   });
 
 //Automatic Assignment Logic
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
     let complaintResponse = await axios.get("https://rakmun-api.rakega.online/service/service/getcategories");
     let complaintsCategories = complaintResponse.data.departmentNames;
-
     let permitsResponse = await axios.get("https://rakmun-api.rakega.online/service/service/requestsnames");
-    let permitsCategories = permitsResponse.data.serviceNames
+    let permitsCategories = permitsResponse.data.requestNames;
   
     try {
         for (let category of complaintsCategories) {
             const apiUrl = 'https://rakmun-api.rakega.online/service/complaint/openedComplaintsWithCategory';
         
             const response = await axios.get(apiUrl, { data: { category } });
-        
             const staffs = await Staff.find({ department: category });
-        
             const threshold = 5;
             let minNumOfTickets = 10000000000000;
             let minStaff;
