@@ -16,7 +16,7 @@ const viewMyAcceptedPermits = (req, res)=>{
 
 const viewMyAssignedPermits = (req, res)=>{
     const assignedTo = req.user.id;
-    axios.get(`https://rakmun-api.rakega.online/service/complaint/viewComplaintsWithIdandOpen`,
+    axios.get(`https://rakmun-api.rakega.online/service/request/viewRequestsWithIdandOpen`,
     {data:{assignedTo}})
         .then(response => {
             res.status(response.status).json(response.data);
