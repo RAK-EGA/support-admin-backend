@@ -63,7 +63,7 @@ const viewTicket = (req, res) => {
 
 const filterTickets = (req, res)=>{
     const searchfactor = req.params.searchfactor; 
-    const assignedTo = req.user._id;
+    const assignedTo = req.user.id;
     if (!searchfactor) {
         return res.status(400).json({ error: 'Missing or invalid search factor parameter' });
     }
