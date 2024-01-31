@@ -25,6 +25,24 @@ const signin = async (req, res) => {
         // User authenticated successfully
         const { _id, name, email, department } = user; // Selectively choose fields to include in the response
   
+        let complaintResponse = await axios.get("https://rakmun-api.rakega.online/service/service/getcategories");
+        let complaintsCategories = complaintResponse.data.departmentNames;
+
+        let permitsResponse = await axios.get("https://rakmun-api.rakega.online/service/service/requestsnames");
+        let permitsCategories = permitsResponse.data.requestNames;
+
+        let type;
+
+        if (complaintsCategories.includes(department)) {
+            type = "complaint";
+        } else if (permitsCategories.includes(department)) {
+            type = "permit";
+        } else {
+            res.status(400).json({ message: "This user does not belong to a defined department" });
+        }
+
+
+
         const accessToken = jwt.sign(
           {
             user: { id: _id, name, email, department },
@@ -33,7 +51,7 @@ const signin = async (req, res) => {
           { expiresIn: "30m" }
         );
   
-        res.status(200).json({ user: { id: _id, name, email, department }, accessToken });
+        res.status(200).json({ user: { id: _id, name, email, department, type }, accessToken });
       } else {
         res.status(400).json({ message: "Incorrect password!!" });
       }

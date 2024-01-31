@@ -3,7 +3,7 @@ const Notification = require('../models/Notification');
 const handleSLAChecker = async (message) => {
     try {
       const body = JSON.parse(message.Body);
-      console.log(body);
+      console.log(body);//////////////
   
       if (!body.detail || (!body.detail.complain && !body.detail.request)) {
         console.log('Invalid message format, missing complain or request details.');
